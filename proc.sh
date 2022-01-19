@@ -2,6 +2,18 @@
 
 # A
 number_of_processes="${1}"
+# Validate input from user
+if [[ ${1} =~ ^[[:digit:]]+$ ]]; then
+    echo "Valid input specified"
+    if (( $1 > 10 )); then
+      echo "Invalid number specified, please provide a number no larger than 10"
+      exit 
+    fi 
+else
+    echo "Invalid input specified, please try again"
+    exit
+fi
+
 # whoami returns the username that invoked the script
 curr_user=$(whoami)
 echo "I'm ${curr_user}"
@@ -23,7 +35,7 @@ processes_from_ps=$(ps axo comm,pid,user | grep "^sleep.*${curr_user}" | awk '{p
 # Calculate the diff between two arrays
 echo ${processes_list[@]} ${processes_from_ps[@]} | tr ' ' '\n' | sort | uniq -u
 echo "Killing processes ${processes_list[@]}"
-kill -9 ${processes_list}
+kill -9 ${processes_list[@]}
 
 # Bonus D
 adduser linuxtestuser --gecos "" --disabled-password &>/dev/null || true
